@@ -1,0 +1,243 @@
+%{
+/* Definition Section */
+#include <stdio.h>
+%}
+
+/* Optional definitions or macro definitions can be added here */
+%%
+/* -----------------------------
+   SECTION 1: BASIC PATTERNS
+   ----------------------------- */
+
+/* Example 1: Matching a literal string "hello" */
+"hello" {
+    printf("Rule: Found literal 'hello': %s\n", yytext);
+}
+
+/* Example 2: Escaping special characters (literal dot) */
+"\." {
+    printf("Rule: Found literal dot '.' in: %s\n", yytext);
+}
+
+/* -----------------------------
+   SECTION 2: CHARACTER CLASSES
+   ----------------------------- */
+
+/* Example 3: Matching any digit */
+[0-9] {
+    printf("Rule: Found a digit: %s\n", yytext);
+}
+
+/* Example 4: Matching any lowercase letter */
+[a-z] {
+    printf("Rule: Found a lowercase letter: %s\n", yytext);
+}
+
+/* Example 5: Matching any alphanumeric character */
+[a-zA-Z0-9] {
+    printf("Rule: Found an alphanumeric character: %s\n", yytext);
+}
+
+/* Example 6: Negated character class: any char that is NOT a lowercase letter */
+[^a-z] {
+    /* In practice, this might catch almost every character,
+       so order is important. */
+    printf("Rule: Found a character NOT in a-z: %s\n", yytext);
+}
+
+/* -----------------------------
+   SECTION 3: PREDEFINED (POSIX) CHARACTER CLASSES
+   ----------------------------- */
+
+/* Example 7: POSIX digit */
+[[:digit:]] {
+    printf("Rule: Found POSIX digit: %s\n", yytext);
+}
+
+/* Example 8: Word character */
+\w {
+    printf("Rule: Found word character: %s\n", yytext);
+}
+
+/* Example 9: Non-word character */
+\W {
+    printf("Rule: Found non-word character: %s\n", yytext);
+}
+
+/* -----------------------------
+   SECTION 4: REPETITION QUANTIFIERS
+   ----------------------------- */
+
+/* Example 10: Kleene star (zero or more 'a's) */
+a* {
+    /* This rule matches even an empty string. Use with care. */
+    printf("Rule: Matched a* (zero or more a's): \"%s\"\n", yytext);
+}
+
+/* Example 11: Plus (one or more 'a's) */
+a+ {
+    printf("Rule: Matched a+ (one or more a's): %s\n", yytext);
+}
+
+/* Example 12: Question mark (zero or one 'a') */
+a? {
+    printf("Rule: Matched a? (zero or one a): \"%s\"\n", yytext);
+}
+
+/* Example 13: Exact three occurrences of 'a' */
+a{3} {
+    printf("Rule: Matched a{3} (exactly three a's): %s\n", yytext);
+}
+
+/* Example 14: Range of occurrences: 2 to 4 'a's */
+a{2,4} {
+    printf("Rule: Matched a{2,4} (2 to 4 a's): %s\n", yytext);
+}
+
+/* -----------------------------
+   SECTION 5: WILDCARDS AND THE DOT (.)
+   ----------------------------- */
+
+/* Example 15: Dot - matches any single character (except newline) */
+. {
+    printf("Rule: Matched any single character (dot): %s\n", yytext);
+}
+
+/* Example 16: Dot with Kleene star: any sequence of characters */
+.* {
+    /* Note: This rule is extremely greedy and may match the whole input.
+       Typically you would use it in a controlled context. */
+    printf("Rule: Matched any sequence of characters (.*): %s\n", yytext);
+}
+
+/* -----------------------------
+   SECTION 6: GROUPING, ALTERNATION, AND CAPTURING
+   ----------------------------- */
+
+/* Example 17: Grouping with parentheses */
+(abc) {
+    printf("Rule: Matched group (abc): %s\n", yytext);
+}
+
+/* Example 18: Alternation (cat or dog) */
+cat|dog {
+    printf("Rule: Matched alternation (cat|dog): %s\n", yytext);
+}
+
+/* Example 19: Capturing groups for structured data (e.g., SSN) */
+(\d{3})-(\d{2})-(\d{4}) {
+    /* You can later refer to submatches if needed. */
+    printf("Rule: Matched SSN-like pattern: %s\n", yytext);
+}
+
+/* Example 20: Non-capturing group for alternation */
+(?:cat|dog) {
+    printf("Rule: Matched non-capturing alternation (?:cat|dog): %s\n", yytext);
+}
+
+/* -----------------------------
+   SECTION 7: ANCHORS
+   ----------------------------- */
+
+/* Example 21: Start of string anchor */
+^Hello {
+    printf("Rule: Matched 'Hello' at the beginning: %s\n", yytext);
+}
+
+/* Example 22: End of string anchor */
+world!$ {
+    printf("Rule: Matched 'world!' at the end: %s\n", yytext);
+}
+
+/* Example 23: Word boundary */
+\bword\b {
+    printf("Rule: Matched whole word 'word': %s\n", yytext);
+}
+
+/* Example 24: Non-word boundary */
+\Bend\B {
+    printf("Rule: Matched 'end' not at a word boundary: %s\n", yytext);
+}
+
+/* -----------------------------
+   SECTION 8: LOOKAHEAD AND LOOKBEHIND (ADVANCED)
+   ----------------------------- */
+
+/* Note: Lookahead and lookbehind constructs may not be supported in every Flex version.
+   If supported, they can be used like so: */
+
+/* Example 25: Positive Lookahead */
+\d+(?= dollars) {
+    printf("Rule: Matched number preceding ' dollars': %s\n", yytext);
+}
+
+/* Example 26: Negative Lookahead */
+\d+(?! dollars) {
+    printf("Rule: Matched number not followed by ' dollars': %s\n", yytext);
+}
+
+/* Example 27: Positive Lookbehind */
+(?<=USD )\d+ {
+    printf("Rule: Matched number preceded by 'USD ': %s\n", yytext);
+}
+
+/* Example 28: Negative Lookbehind */
+(?<!USD )\d+ {
+    printf("Rule: Matched number not preceded by 'USD ': %s\n", yytext);
+}
+
+/* -----------------------------
+   SECTION 9: PRACTICAL USE CASES
+   ----------------------------- */
+
+/* Example 29: Email address validation */
+^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ {
+    printf("Rule: Matched valid email: %s\n", yytext);
+}
+
+/* Example 30: Basic URL validation */
+^(https?|ftp)://[^\s/$.?#].[^\s]*$ {
+    printf("Rule: Matched valid URL: %s\n", yytext);
+}
+
+/* Example 31: IPv4 address validation */
+^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$ {
+    printf("Rule: Matched valid IPv4 address: %s\n", yytext);
+}
+
+/* Example 32: Date validation (YYYY-MM-DD) */
+^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])$ {
+    printf("Rule: Matched valid date (YYYY-MM-DD): %s\n", yytext);
+}
+
+/* Example 33: Hexadecimal color code */
+^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$ {
+    printf("Rule: Matched valid hex color code: %s\n", yytext);
+}
+
+/* -----------------------------
+   SECTION 10: SPECIAL FLAGS & MODES
+   ----------------------------- */
+
+/* Example 34: Case-insensitive matching (inline flag) */
+(?i)abc {
+    printf("Rule: Matched case-insensitive 'abc': %s\n", yytext);
+}
+
+/* Example 35: Multiline mode (inline flag) */
+(?m)^start {
+    printf("Rule: Matched 'start' at beginning of a line: %s\n", yytext);
+}
+
+/* Example 36: Dotall mode (inline flag) */
+(?s).* {
+    printf("Rule: Matched using dotall mode (including newlines): %s\n", yytext);
+}
+%%
+/* User Code Section */
+int main(void)
+{
+    /* yylex() reads the input and applies the rules above */
+    yylex();
+    return 0;
+}

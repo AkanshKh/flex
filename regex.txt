@@ -1,0 +1,485 @@
+=======================================================================
+REGULAR EXPRESSIONS: EXAMPLES, USE CASES, AND INFORMATION
+=======================================================================
+
+This document provides a comprehensive list of regex examples along with sample usage and expected behavior for every regex discussed. Each example includes:
+  • The regex pattern
+  • A description and typical use case
+  • A sample input string
+  • The expected match(es) or an explanation of what is matched
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 1: BASIC REGEX PATTERNS
+────────────────────────────────────────────────────────────────────────────
+
+Example 1: Matching a Literal String
+--------------------------------------
+Regex:
+    hello
+Description:
+    Matches the exact sequence "hello" anywhere in the text.
+Sample Input:
+    "hello world, hello universe"
+Expected Matches:
+    "hello" (the first occurrence) and later the second "hello"
+
+Example 2: Escaping Special Characters
+----------------------------------------
+Regex:
+    \.
+Description:
+    Matches a literal dot. (Normally, . is a wildcard, so it must be escaped.)
+Sample Input:
+    "file.txt"
+Expected Matches:
+    "." (the dot between "file" and "txt")
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 2: CHARACTER CLASSES
+────────────────────────────────────────────────────────────────────────────
+
+Example 3: Matching Any Digit
+-----------------------------
+Regex:
+    [0-9]
+Description:
+    Matches any single digit from 0 to 9.
+Sample Input:
+    "abc123"
+Expected Matches:
+    "1", "2", and "3" (each digit is matched individually)
+
+Example 4: Matching Any Lowercase Letter
+------------------------------------------
+Regex:
+    [a-z]
+Description:
+    Matches any single lowercase letter.
+Sample Input:
+    "Hello"
+Expected Matches:
+    "e", "l", "l", "o" (only the lowercase letters; the uppercase "H" is not matched)
+
+Example 5: Matching Any Alphanumeric Character
+-----------------------------------------------
+Regex:
+    [a-zA-Z0-9]
+Description:
+    Matches any letter (uppercase or lowercase) or digit.
+Sample Input:
+    "Test123!"
+Expected Matches:
+    "T", "e", "s", "t", "1", "2", "3" (each alphanumeric character individually)
+
+Example 6: Negated Character Class
+----------------------------------
+Regex:
+    [^a-z]
+Description:
+    Matches any character that is NOT a lowercase letter.
+Sample Input:
+    "Hello123"
+Expected Matches:
+    "H", "1", "2", "3" (and any other character not in a–z; the lowercase letters "e", "l", "l", "o" are ignored)
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 3: PREDEFINED (POSIX) CHARACTER CLASSES
+────────────────────────────────────────────────────────────────────────────
+
+Example 7: Any Digit Using POSIX Notation
+------------------------------------------
+Regex:
+    [[:digit:]]
+Description:
+    Equivalent to [0-9]; matches any single digit.
+Sample Input:
+    "year 2025"
+Expected Matches:
+    "2", "0", "2", "5"
+
+Example 8: Any Word Character
+-----------------------------
+Regex:
+    \w
+Description:
+    Matches any “word” character (letters, digits, and underscores).
+Sample Input:
+    "Hello_world!"
+Expected Matches:
+    "H", "e", "l", "l", "o", "_", "w", "o", "r", "l", "d" (each word character)
+
+Example 9: Any Non-Word Character
+-----------------------------------
+Regex:
+    \W
+Description:
+    Matches any character that is NOT a word character.
+Sample Input:
+    "Hello, world!"
+Expected Matches:
+    ",", " " (spaces), "!" (punctuation, etc.)
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 4: REPETITION QUANTIFIERS
+────────────────────────────────────────────────────────────────────────────
+
+Example 10: Kleene Star (Zero or More)
+---------------------------------------
+Regex:
+    a*
+Description:
+    Matches zero or more occurrences of the character "a".
+Sample Input:
+    "bbaaac"
+Expected Matches:
+    In "bbaaac": it may match empty strings at positions where "a" is absent and "aaa" where consecutive a’s occur.
+
+Example 11: Plus (One or More)
+------------------------------
+Regex:
+    a+
+Description:
+    Matches one or more occurrences of the character "a".
+Sample Input:
+    "bbaaac"
+Expected Matches:
+    "aaa" (the group of consecutive "a" characters)
+
+Example 12: Question Mark (Zero or One)
+-----------------------------------------
+Regex:
+    a?
+Description:
+    Matches zero or one occurrence of the character "a".
+Sample Input:
+    "abc"
+Expected Matches:
+    Matches "a" at the start; in other positions, it can match an empty string if "a" is not present.
+
+Example 13: Exact Number of Occurrences
+----------------------------------------
+Regex:
+    a{3}
+Description:
+    Matches exactly three consecutive "a" characters.
+Sample Input:
+    "aaa"
+Expected Matches:
+    "aaa"
+Note:
+    "aa" (too few) or "aaaa" (too many) would not match the pattern exactly.
+
+Example 14: Range of Occurrences
+-------------------------------
+Regex:
+    a{2,4}
+Description:
+    Matches between 2 and 4 occurrences of "a".
+Sample Input:
+    "aaaaa"
+Expected Matches:
+    Depending on the engine’s greediness, it may match the first "aaaa" (4 a’s) leaving the extra "a" unmatched.
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 5: WILDCARDS AND THE DOT (.)
+────────────────────────────────────────────────────────────────────────────
+
+Example 15: Dot (.) - Any Single Character
+--------------------------------------------
+Regex:
+    .
+Description:
+    Matches any single character except a newline.
+Sample Input:
+    "abc"
+Expected Matches:
+    "a", "b", "c" (each character individually)
+
+Example 16: Dot with Kleene Star
+---------------------------------
+Regex:
+    .*
+Description:
+    Matches any sequence of characters (including an empty sequence), except newline by default.
+Sample Input:
+    "hello"
+Expected Matches:
+    "hello" (the entire string)
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 6: GROUPING, ALTERNATION, AND CAPTURING
+────────────────────────────────────────────────────────────────────────────
+
+Example 17: Grouping with Parentheses
+--------------------------------------
+Regex:
+    (abc)
+Description:
+    Groups the sequence "abc" together; useful when applying quantifiers or for back-references.
+Sample Input:
+    "abcabc"
+Expected Matches:
+    Two occurrences of the group "abc" (each match returns "abc").
+
+Example 18: Alternation (Logical OR)
+------------------------------------
+Regex:
+    cat|dog
+Description:
+    Matches either "cat" or "dog".
+Sample Input:
+    "I have a cat and a dog."
+Expected Matches:
+    "cat" and "dog" (each found in the sentence)
+
+Example 19: Capturing Groups for Structured Data
+-------------------------------------------------
+Regex:
+    (\d{3})-(\d{2})-(\d{4})
+Description:
+    Matches a pattern similar to a Social Security number, capturing three separate groups:
+      - Group 1: Three digits
+      - Group 2: Two digits
+      - Group 3: Four digits
+Sample Input:
+    "My SSN is 123-45-6789."
+Expected Matches:
+    Entire match: "123-45-6789"
+    Captured groups: "123", "45", "6789"
+
+Example 20: Non-Capturing Groups
+-------------------------------
+Regex:
+    (?:cat|dog)
+Description:
+    Matches "cat" or "dog" without creating a capturing group.
+Sample Input:
+    "catdog"
+Expected Matches:
+    "cat" and "dog" are matched in sequence, but no capture groups are stored.
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 7: ANCHORS
+────────────────────────────────────────────────────────────────────────────
+
+Example 21: Start of String Anchor
+-----------------------------------
+Regex:
+    ^Hello
+Description:
+    Matches "Hello" only if it appears at the beginning of the string.
+Sample Input:
+    "Hello there, world!"
+Expected Matches:
+    "Hello" (only if it starts the string)
+
+Example 22: End of String Anchor
+---------------------------------
+Regex:
+    world!$
+Description:
+    Matches "world!" only if it appears at the end of the string.
+Sample Input:
+    "Hello, world!"
+Expected Matches:
+    "world!" (only at the end)
+
+Example 23: Word Boundary
+-------------------------
+Regex:
+    \bword\b
+Description:
+    Matches the whole word "word", ensuring it is not part of a larger word.
+Sample Input:
+    "A keyword and a word are different."
+Expected Matches:
+    "word" as a standalone match (not the "word" inside "keyword")
+
+Example 24: Non-Word Boundary
+-----------------------------
+Regex:
+    \Bend\B
+Description:
+    Matches "end" when it is not at a word boundary.
+Sample Input:
+    "bend trend"
+Expected Matches:
+    "end" as part of "bend" and "trend" (since it’s in the middle of these words)
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 8: LOOKAHEAD AND LOOKBEHIND (ADVANCED)
+────────────────────────────────────────────────────────────────────────────
+
+Example 25: Positive Lookahead
+------------------------------
+Regex:
+    \d+(?= dollars)
+Description:
+    Matches one or more digits only if they are immediately followed by " dollars". (The lookahead itself is not included in the match.)
+Sample Input:
+    "It costs 50 dollars."
+Expected Matches:
+    "50"
+
+Example 26: Negative Lookahead
+------------------------------
+Regex:
+    \d+(?! dollars)
+Description:
+    Matches one or more digits only if they are NOT immediately followed by " dollars".
+Sample Input:
+    "50 items cost 50 dollars."
+Expected Matches:
+    The first "50" (in "50 items") is matched; the "50" before " dollars" is not matched.
+
+Example 27: Positive Lookbehind
+-------------------------------
+Regex:
+    (?<=USD )\d+
+Description:
+    Matches one or more digits only if they are immediately preceded by "USD ".
+Sample Input:
+    "The amount is USD 100."
+Expected Matches:
+    "100"
+
+Example 28: Negative Lookbehind
+-------------------------------
+Regex:
+    (?<!USD )\d+
+Description:
+    Matches one or more digits only if they are NOT immediately preceded by "USD ".
+Sample Input:
+    "100 USD 200"
+Expected Matches:
+    "100" is matched (if not preceded by "USD "), while "200" might be skipped if it follows "USD " (depending on context).
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 9: PRACTICAL USE CASES
+────────────────────────────────────────────────────────────────────────────
+
+Example 29: Email Address Validation
+--------------------------------------
+Regex:
+    ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$
+Description:
+    Validates a typical email address format.
+Sample Input:
+    "example@test.com"
+Expected Matches:
+    "example@test.com" if valid; nothing if the format is incorrect.
+
+Example 30: Basic URL Validation
+-------------------------------
+Regex:
+    ^(https?|ftp)://[^\s/$.?#].[^\s]*$
+Description:
+    Matches URLs that begin with http, https, or ftp.
+Sample Input:
+    "https://www.example.com"
+Expected Matches:
+    "https://www.example.com" if it conforms to the pattern.
+
+Example 31: IPv4 Address Validation
+-----------------------------------
+Regex:
+    ^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$
+Description:
+    Validates an IPv4 address, ensuring each octet is in the range 0–255.
+Sample Input:
+    "192.168.1.1"
+Expected Matches:
+    "192.168.1.1" if valid; no match if any octet is out of range.
+
+Example 32: Date Validation (YYYY-MM-DD)
+-----------------------------------------
+Regex:
+    ^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])$
+Description:
+    Validates dates in the "YYYY-MM-DD" format.
+Sample Input:
+    "2025-12-31"
+Expected Matches:
+    "2025-12-31" if the date is valid.
+
+Example 33: Hexadecimal Color Code
+----------------------------------
+Regex:
+    ^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
+Description:
+    Matches valid hex color codes with or without a leading "#".
+Sample Input:
+    "#1A2B3C" or "FFF"
+Expected Matches:
+    "#1A2B3C" and "FFF" when used individually, if valid.
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 10: SPECIAL FLAGS & MODES
+────────────────────────────────────────────────────────────────────────────
+
+Example 34: Case-Insensitive Matching
+---------------------------------------
+Regex (with inline flag):
+    (?i)abc
+Description:
+    Matches "abc" in a case-insensitive manner.
+Sample Input:
+    "ABC", "Abc", "abc"
+Expected Matches:
+    All variations (e.g., "ABC" and "Abc" will match just as "abc" does).
+
+Example 35: Multiline Mode
+--------------------------
+Regex (with inline flag):
+    (?m)^start
+Description:
+    In multiline mode, the caret (^) matches the start of each line.
+Sample Input:
+    "start of line\nanother start"
+Expected Matches:
+    "start" at the beginning of any line.
+
+Example 36: Dotall Mode (Single-line Mode)
+------------------------------------------
+Regex (with inline flag):
+    (?s).*
+Description:
+    In dotall mode, the dot (.) matches newline characters as well.
+Sample Input:
+    "Line1\nLine2"
+Expected Matches:
+    "Line1\nLine2" (the entire text, including the newline)
+
+────────────────────────────────────────────────────────────────────────────
+TIPS, TRICKS, AND BEST PRACTICES
+────────────────────────────────────────────────────────────────────────────
+
+1. Greedy vs. Lazy Quantifiers:
+   - Greedy quantifiers (e.g., *, +) match as much text as possible.
+   - Lazy quantifiers (e.g., *?, +?) match as little text as possible.
+   Example:
+       Greedy:   <.*>   might match too much.
+       Lazy:     <.*?>  matches the smallest possible string.
+
+2. Always Escape Special Characters:
+   When you need to match characters that have special meanings (e.g., ., *, +, ?, (, ), [, ], {, }, |, ^, $),
+   escape them with a backslash (e.g., \., \*, etc.).
+
+3. Use Online Testers:
+   Tools like regex101.com or regexr.com allow you to test and debug your regex patterns interactively.
+
+────────────────────────────────────────────────────────────────────────────
+CONCLUSION
+────────────────────────────────────────────────────────────────────────────
+
+This file has provided a comprehensive collection of regex examples covering:
+  • Basic literal matching
+  • Character classes and POSIX classes
+  • Repetition quantifiers and wildcards
+  • Grouping, alternation, anchors, lookahead, and lookbehind
+  • Practical validation examples and special regex modes
+
+Experiment with these examples to build your understanding of regular expressions. Adapt them to your needs and use online tools to further explore how each pattern works in real-world scenarios.
+
+Happy regex-ing!
+=======================================================================
